@@ -18,7 +18,7 @@ class Product(models.Model):
     """Модель конкретных для товаров."""
     name = models.CharField(verbose_name='Название', max_length=200, unique=True)
     cost = models.DecimalField(verbose_name='Стоимость', max_digits=9, decimal_places=2)
-    units = models.CharField(verbose_name='Ед. Измерения',
+    units = models.CharField(verbose_name='Ед. Измерения', max_length=2,
         choices=(
             ('M', 'метр'),
             ('CM', 'сантиметр'),
@@ -46,7 +46,7 @@ class Customer(models.Model):
     """Модель для покупаетелей."""
     first_name = models.CharField(verbose_name='Имя', max_length=128)
     last_name = models.CharField(verbose_name='Фамилия', max_length=128)
-    status = models.CharField(verbose_name='Статус',
+    status = models.CharField(verbose_name='Статус', max_length=1,
         choices=(
             ('B', 'Бронза'),
             ('S', 'Серебро'),
@@ -84,12 +84,13 @@ class Sales(models.Model):
     total_cost = models.DecimalField('Стоимость', max_digits=9, decimal_places=2)
     certificate = models.ForeignKey(
         to='Sales',
-        on_delete=models.PROTECT
+        on_delete=models.PROTECT,
+        blank=True
     )
 
     class Meta:
         verbose_name = 'Покупка'
-        verbose_name = 'Покупки'
+        verbose_name_plural = 'Покупки'
 
     def __str__(self):
         return f"{self.product} x{self.amount}"
