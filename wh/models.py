@@ -3,15 +3,20 @@ from django.db import models
 
 class ProductType(models.Model):
     """Модель для типов товаров."""
-    name = models.CharField(verbose_name='Название', max_length=200)
+    name = models.CharField(verbose_name='Название', max_length=200, unique=True)
+
+    class Meta:
+        indexes = [models.Index(fields=['name'])]
+        verbose_name = 'Тип продукта'
+        verbose_name_plural = 'Типы продуктов'
 
     def __str__(self):
-        return name
+        return self.name
 
 
 class Product(models.Model):
     """Модель конкретных для товаров."""
-    name = models.CharField(verbose_name='Название', max_length=200)
+    name = models.CharField(verbose_name='Название', max_length=200, unique=True)
     cost = models.DecimalField(verbose_name='Стоимость', max_digits=9, decimal_places=2)
     units = models.CharField(verbose_name='Ед. Измерения',
         choices=(
@@ -21,7 +26,17 @@ class Product(models.Model):
             ('QM', 'кубический метр')
         )
     )
-    type = models.ForeignKey('ProductType')
+    type = models.ForeignKey(
+        to='ProductType',
+        on_delete=models.PROTECT,
+        related_name='products',
+        related_query_name='product'
+    )
+
+    class Meta:
+        indexes = [models.Index(fields=['name'])]
+        verbose_name = 'Продукт'
+        verbose_name_plural = 'Продукты'
 
     def __str__(self):
         return f"{self.name}"
@@ -40,19 +55,41 @@ class Customer(models.Model):
         )
     )
 
+    class Meta:
+        indexes = [models.Index(fields=['first_name', 'last_name'])]
+        verbose_name = 'Покупатель'
+        verbose_name_plural = 'Покупатели'
+
     def __str__(self):
         return f"{self.first_name} {self.last_name} [{self.status}]"
 
 
 class Sales(models.Model):
     """Модель для продаж."""
-    product = model.ForeignKey('Product')
-    buyer = models.ForeignKey('Customer')
+    product = models.ForeignKey(
+        to='Product',
+        on_delete=models.PROTECT,
+        related_name='sales',
+        related_query_name='transaction'
+    )
+    buyer = models.ForeignKey(
+        to='Customer',
+        on_delete=models.PROTECT,
+        related_name='purchases',
+        related_query_name='purchase'
+    )
     amount = models.PositiveIntegerField(verbose_name='кол-во')
     delivery_cost = models.DecimalField(verbose_name='Стоимость доставки', max_digits=9, decimal_places=2)
     date = models.DateTimeField('Дата', auto_now_add=True)
     total_cost = models.DecimalField('Стоимость', max_digits=9, decimal_places=2)
-    certificate = models.ForeignKey('Sales')
+    certificate = models.ForeignKey(
+        to='Sales',
+        on_delete=models.PROTECT
+    )
+
+    class Meta:
+        verbose_name = 'Покупка'
+        verbose_name = 'Покупки'
 
     def __str__(self):
         return f"{self.product} x{self.amount}"
