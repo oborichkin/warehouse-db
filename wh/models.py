@@ -137,8 +137,8 @@ class Transaction(models.Model):
         for item in self.items.all():
             self.total_cost += item.product.cost * item.amount
             item.product.decrease_amount(item.amount)
-        self.total_cost *= decimal.Decimal(self.buyer.calculate_discount())
         self.total_cost += self.delivery_cost
+        self.total_cost *= decimal.Decimal(self.buyer.calculate_discount())
         if self.certificate:
             self.total_cost = max(0, self.total_cost -
                                   self.certificate.product.cost)
