@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Transaction</title>
+    <style>
+        html {
+            font-family: monospace;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Чек по транзакции #{{object.id}}</h1>
+    <table>
+        {% for item in object.items.all %}
+        <tr>
+            <td>
+                {{ item.product.name }} (x{{ item.amount }})
+            </td>
+            <td>
+                {{ item.product.cost }}
+            </td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>Стоимость доставки: </td>
+            <td>{{ object.delivery_cost }}</td>
+        </tr>
+        <tr>
+            <td>Скидка составила: </td>
+            <td>{{ object.get_discount_amount }}</td>
+        </tr>
+        <tr>
+            <td>Общая стоимость: </td>
+            <td>{{ object.total_cost }}</td>
+        </tr>
+
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+
+        <tr>
+            <td>Покупатель:</td>
+            <td>{{object.buyer.first_name}} {{object.buyer.last_name}}</td>
+        </tr>
+    </table>
+
+
+</body>
+
+</html>

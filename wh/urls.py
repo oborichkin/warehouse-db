@@ -11,5 +11,7 @@ router.register(r'sales', views.SalesViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('api', include('rest_framework.urls', namespace='rest_framework'))
+    path('api', include('rest_framework.urls', namespace='rest_framework')),
+    path('storage', views.StorageLeftView.as_view()),
+    path('transaction/<int:pk>', views.TransactionView.as_view())
 ]

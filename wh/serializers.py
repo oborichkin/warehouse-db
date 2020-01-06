@@ -18,10 +18,11 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
 class CustomerSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Customer
-        fields = ('id', 'first_name', 'last_name', 'status')
+        fields = ('id', 'first_name', 'last_name')
 
 
-class SalesSerializer(serializers.HyperlinkedModelSerializer):
+class TransactionSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Sales
-        fields = ('id', 'date', 'product', 'buyer', 'amount', 'delivery_cost', 'total_cost', 'certificate')
+        model = Transaction
+        depth = 1
+        fields = ('id', 'date', 'buyer', 'items', 'delivery_cost', 'total_cost', 'certificate')

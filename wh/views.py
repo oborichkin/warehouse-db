@@ -1,9 +1,20 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.views.generic import ListView, DetailView
 from rest_framework import viewsets, permissions
 
 from .serializers import *
 from .models import *
+
+
+class StorageLeftView(ListView):
+    model = Product
+    template_name = 'wh/storage_left.html'
+
+
+class TransactionView(DetailView):
+    model = Transaction
+    template_name = 'wh/transaction.html'
 
 
 class ProductTypeViewSet(viewsets.ModelViewSet):
@@ -25,6 +36,6 @@ class CustomerViewSet(viewsets.ModelViewSet):
 
 
 class SalesViewSet(viewsets.ModelViewSet):
-    queryset = Sales.objects.all().order_by('date')
-    serializer_class = SalesSerializer
+    queryset = Transaction.objects.all().order_by('date')
+    serializer_class = TransactionSerializer
     permission_classes = [permissions.IsAuthenticated]
