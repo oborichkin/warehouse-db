@@ -71,7 +71,8 @@ class Customer(models.Model):
 
     @property
     def total_spendings(self):
-        return Transaction.objects.filter(buyer=self).aggregate(Sum('total_cost'))['total_cost__sum']
+        ts = Transaction.objects.filter(buyer=self).aggregate(Sum('total_cost'))['total_cost__sum']
+        return ts if ts else 0
 
     def calculate_discount(self):
         """Расчитывает скидку для покупателя"""
@@ -130,9 +131,14 @@ class Transaction(models.Model):
 
     @property
     def get_discount_amount(self):
-        return f"{self.total_cost - self.total_cost * decimal.Decimal(self.buyer.calculate_discount()):.2f}"
+        total_cost = 0
+        for item in self.items.all():
+            total_cost += item.product.cost * item.amount
+        total_cost += self.delivery_cost
+        return f"{total_cost - self.total_cost:.2f}"
 
     def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
         self.total_cost = 0
         for item in self.items.all():
             self.total_cost += item.product.cost * item.amount
